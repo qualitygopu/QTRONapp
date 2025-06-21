@@ -1,0 +1,1 @@
+ C:\\Users\\quali\\Documents\\GitHub\\QTRONapp\\.dart_tool\\flutter_build\\2b1bae9ae41489160953782a7e5cf395\\native_assets.yaml: 

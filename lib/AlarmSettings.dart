@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:qtronapp/AudioConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -51,8 +50,8 @@ class _AlarmSettingState extends State<AlarmSetting> {
   Future<void> loaddata() async {
     final response = await http.get(Uri.parse(
         // 'http://192.168.4.1/alarmconf'));
-        // 'http://fileserver.local/alarmconf'));
-        'https://raw.githubusercontent.com/qualitygopu/files/main/files.json'));
+        'http://qtron.local/alarmconf'));
+    // 'https://raw.githubusercontent.com/qualitygopu/files/main/files.json'));
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the JSON
       final Map<String, dynamic> set = json.decode(response.body);
@@ -64,7 +63,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
 
   Future<void> uploadConfig() async {
     // String url = 'https://qtr.requestcatcher.com/test';
-    String url = 'http://192.168.4.1/updateconfig';
+    String url = 'http://qtron/updateconfig';
     Map<dynamic, dynamic> jsonList = audioConfig.toJson();
     var jsonString = json.encode(jsonList);
 
@@ -192,18 +191,19 @@ class _AlarmSettingState extends State<AlarmSetting> {
                               width: 65,
                               height: 65,
                               decoration: BoxDecoration(
-                                  boxShadow: timeSelIndex == int ?
-                                  [
-                                    BoxShadow(
-                                      color: Colors.white,
-                                      blurRadius: 5.0,
-                                      spreadRadius: 5.0,
-                                      offset: const Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                    ),
-                                  ] : [],
+                                  boxShadow: timeSelIndex == int
+                                      ? [
+                                          BoxShadow(
+                                            color: Colors.white,
+                                            blurRadius: 5.0,
+                                            spreadRadius: 5.0,
+                                            offset: const Offset(
+                                              0.0,
+                                              0.0,
+                                            ),
+                                          ),
+                                        ]
+                                      : [],
                                   shape: BoxShape.circle,
                                   color:
                                       audioConfig.playList![int].isPlay == true

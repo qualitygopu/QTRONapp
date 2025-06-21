@@ -1,15 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:qtronapp/permission_handler.dart';
-import 'package:flutter/foundation.dart';
 
 class ConnectDevice extends StatefulWidget {
   const ConnectDevice({super.key});
@@ -37,7 +32,7 @@ class _ConnectDeviceState extends State<ConnectDevice> {
   void initState() {
     super.initState();
     PermissionHandler.arePermissionsGranted();
-    
+
     FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
@@ -57,23 +52,23 @@ class _ConnectDeviceState extends State<ConnectDevice> {
     if (_bluetoothState.isEnabled) {
       try {
         setState(() {
-                  isDiscovering = true;
-
+          isDiscovering = true;
         });
         _devicesList.clear();
         _streamSubscription =
             FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
           setState(() {
-            if(r.device.name != null){
-            if (r.device.name!.startsWith('QTRON')) {
-              final existingIndex = _devicesList
-                  .indexWhere((element) => element.address == r.device.address);
-              if (existingIndex >= 0) {
-                _devicesList[existingIndex] = r.device;
-              } else {
-                _devicesList.add(r.device);
+            if (r.device.name != null) {
+              if (r.device.name!.startsWith('QTRON')) {
+                final existingIndex = _devicesList.indexWhere(
+                    (element) => element.address == r.device.address);
+                if (existingIndex >= 0) {
+                  _devicesList[existingIndex] = r.device;
+                } else {
+                  _devicesList.add(r.device);
+                }
               }
-            }}
+            }
           });
         });
       } catch (ex) {
@@ -101,13 +96,12 @@ class _ConnectDeviceState extends State<ConnectDevice> {
       });
       // print(receivedData.endsWith('#'));
     });
-    
   }
 
   @override
   void dispose() {
-   isDiscovering ? _streamSubscription?.cancel() : null;
-   isConnected ? connection!.close() : null;
+    isDiscovering ? _streamSubscription?.cancel() : null;
+    isConnected ? connection!.close() : null;
     super.dispose();
   }
 
@@ -135,36 +129,52 @@ class _ConnectDeviceState extends State<ConnectDevice> {
                     ? Icons.bluetooth_connected
                     : Icons.bluetooth),
               )),
-              isDiscovering ?  Container(
-                      height: 20, padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 5), child: LinearProgressIndicator(color: Color.fromARGB(255, 255, 191, 0),))
-                  : Container(),
-          for(var dev in _devicesList)
-          ListTile(
-                title: Text(dev.name.toString()),
-                subtitle: Text(dev.address),
-                trailing: ElevatedButton.icon(
-                    onPressed: () async {
-                      setState(() {isConnecting = true;});
-                      !isConnected
-                          ? await BluetoothConnection.toAddress(
-                                  dev.address)
-                              .then((value) {
-                                setState(() {connection = value;
-                                // isConnecting = false;
-                                });
-                              
-                              _startListening();
-                            })
-                          : connection!.close();
-                      setState(() {isConnecting = false;});
-                    },
-                    icon: Icon(
-                        isConnected ? Icons.link : Icons.link_off_outlined),
-                    label: Text(isConnected ? "Disconnect" : "Connect")),
-              ),
-              isConnecting ?  Container(
-                      height: 20, padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 5), child: LinearProgressIndicator(color: Color.fromARGB(255, 255, 191, 0),))
-                  : Container(),
+          isDiscovering
+              ? Container(
+                  height: 20,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: LinearProgressIndicator(
+                    color: Color.fromARGB(255, 255, 191, 0),
+                  ))
+              : Container(),
+          for (var dev in _devicesList)
+            ListTile(
+              title: Text(dev.name.toString()),
+              subtitle: Text(dev.address),
+              trailing: ElevatedButton.icon(
+                  onPressed: () async {
+                    setState(() {
+                      isConnecting = true;
+                    });
+                    !isConnected
+                        ? await BluetoothConnection.toAddress(dev.address)
+                            .then((value) {
+                            setState(() {
+                              connection = value;
+                              // isConnecting = false;
+                            });
+
+                            _startListening();
+                          })
+                        : connection!.close();
+                    setState(() {
+                      isConnecting = false;
+                    });
+                  },
+                  icon:
+                      Icon(isConnected ? Icons.link : Icons.link_off_outlined),
+                  label: Text(isConnected ? "Disconnect" : "Connect")),
+            ),
+          isConnecting
+              ? Container(
+                  height: 20,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: LinearProgressIndicator(
+                    color: Color.fromARGB(255, 255, 191, 0),
+                  ))
+              : Container(),
           isConnected
               ? Container(
                   padding: const EdgeInsets.only(top: 20),
@@ -233,30 +243,37 @@ class _ConnectDeviceState extends State<ConnectDevice> {
                           decoration:
                               InputDecoration(hintText: 'Enter Wifi Password'),
                         )),
-                        SizedBox(height: 20,),
-                      Container(
-                  padding: const EdgeInsets.only(top: 20),
-                  height: 70,
-                  width: 150,
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      print('SSID :${selectedWifi}, PASS :${wifipwdController.text}');
-                      setState(() {
-                        receivedData='';
-                        
-                      });
-                      await _sendMessage("connect|${selectedWifi}|${wifipwdController.text}");
-                    },
-                    label: Text("Connect"),
-                    icon: const Icon(Icons.connected_tv_sharp),
-                  ))
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        padding: const EdgeInsets.only(top: 20),
+                        height: 70,
+                        width: 150,
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            print(
+                                'SSID :${selectedWifi}, PASS :${wifipwdController.text}');
+                            setState(() {
+                              receivedData = '';
+                            });
+                            await _sendMessage(
+                                "connect|${selectedWifi}|${wifipwdController.text}");
+                          },
+                          label: Text("Connect"),
+                          icon: const Icon(Icons.connected_tv_sharp),
+                        ))
                   ],
                 )
               : isWifiScanning
-                  ?  Container(
-                      height: 10, padding:const EdgeInsets.symmetric(horizontal: 20), child: LinearProgressIndicator(color: Color.fromARGB(255, 255, 191, 0),))
+                  ? Container(
+                      height: 10,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: LinearProgressIndicator(
+                        color: Color.fromARGB(255, 255, 191, 0),
+                      ))
                   : Container(),
-                  // Text(receivedData)
+          // Text(receivedData)
         ],
       ),
       floatingActionButton: IconButton(
@@ -301,4 +318,3 @@ class _ConnectDeviceState extends State<ConnectDevice> {
     }
   }
 }
-

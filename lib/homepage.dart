@@ -8,7 +8,6 @@ import 'package:qtronapp/AlarmSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:qtronapp/permission_handler.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:swipe_refresh/swipe_refresh.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -53,15 +52,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       setState(() async {
-         isDeviceConnected = await _Connection();
+        isDeviceConnected = await _Connection();
       });
-     
     }
   }
 
   Future<bool> _Connection() async {
     var wifiName = await getConnectedSSID();
-          print(wifiName);
+    print(wifiName);
 
     return wifiName.startsWith('"QTRON');
   }
@@ -77,7 +75,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Device Not Connected"),
         ));
-        
       }
     } else if (opt == 1) {
     } else if (opt == 2) {}

@@ -54,7 +54,12 @@ dependencies:
   open_settings_plus: ^0.3.3
   network_info_plus: ^5.0.3
   swipe_refresh: ^1.1.2
-  
+  web_socket_channel: ^2.4.0
+  settings_ui: ^2.0.2
+  time_range_picker: ^2.3.0
+  day_picker: ^2.3.0
+  get: ^4.7.2
+
 
 dev_dependencies:
   flutter_test:

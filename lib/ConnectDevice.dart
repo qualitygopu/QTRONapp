@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qtronapp/permission_handler.dart';
 import 'package:open_settings_plus/open_settings_plus.dart';
-import 'package:wifi_iot/wifi_iot.dart';
 
 class ConnectDevice extends StatefulWidget {
   const ConnectDevice({super.key});
